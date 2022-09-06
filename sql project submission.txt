@@ -1,0 +1,56 @@
+/*Query 1 - query used for first insight*/
+
+WITH Table1 AS
+  (SELECT i.BillingCountry AS country,
+          g.name AS genre,
+          COUNT(*) AS sales
+   FROM InvoiceLine il
+   JOIN Invoice i ON i.InvoiceId = il.InvoiceId
+   JOIN Track t ON t.TrackId = il.TrackId
+   JOIN Genre g ON g.GenreId = t.GenreId
+   GROUP BY 1,
+            2)
+SELECT *
+FROM Table1
+WHERE (country,
+       sales) IN
+    (SELECT country,
+            MAX(sales) max_sales
+     FROM Table1
+     GROUP BY country)
+ORDER BY country;
+
+/*Query 2 - query used for first insight*/
+SELECT A.Name AS Artist_Name,
+       T.Composer AS Composer_Name,
+       count(IL.invoicelineId) AS No_Tracks_Solds
+FROM Artist A
+JOIN Album AL ON A.ArtistId=Al.ArtistId
+JOIN Track T ON T.AlbumId=Al.AlbumId
+JOIN InvoiceLine IL ON IL.TrackId=T.TrackId
+WHERE T.Composer IS NOT NULL
+GROUP BY A.Name,
+         T.Composer
+ORDER BY No_Tracks_Solds DESC
+LIMIT 10;
+
+/*Query 3 - query used for first insight*/
+SELECT E.LastName AS Sales_Agent,
+       sum(I.Total) Target_in_USD
+FROM Employee E
+JOIN Customer C ON C.SupportRepId=E.EmployeeId
+JOIN Invoice I ON I.CustomerId=C.CustomerId
+WHERE E.Title IS "Sales Support Agent"
+GROUP BY Sales_Agent
+ORDER BY Target_in_USD DESC;
+
+/*Query 4 - query used for first insight*/
+SELECT A.Name,
+       count(IL.invoiceLineId) AS Sales
+FROM Artist A
+JOIN Album ON Album.ArtistId=A.ArtistId
+JOIN Track T ON T.AlbumId=Album.AlbumId
+JOIN InvoiceLine IL ON IL.TrackId=T.TrackId
+GROUP BY A.Name
+ORDER BY Sales DESC
+LIMIT 10;
