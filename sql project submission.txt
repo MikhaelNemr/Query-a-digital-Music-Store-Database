@@ -1,6 +1,4 @@
-/*Query 1 - query used for first insight*/
-
-WITH Table1 AS
+/*Query 1 - query used for first insight*/ WITH Table1 AS
   (SELECT i.BillingCountry AS country,
           g.name AS genre,
           COUNT(*) AS sales
